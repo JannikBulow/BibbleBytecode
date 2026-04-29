@@ -8,6 +8,7 @@
 namespace bibblebytecode {
     class ByteBuffer {
     public:
+        ByteBuffer() = default;
         ByteBuffer(const uint8_t* data, size_t size);
 
         bool fail() const { return mFail; }
