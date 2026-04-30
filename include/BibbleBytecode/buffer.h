@@ -30,6 +30,9 @@ namespace bibblebytecode {
         size_t mPos;
         bool mFail;
     };
+
+    ByteBuffer Open(const char* filePath);
+    ByteBuffer Open(const std::string& filePath);
 }
 
 #endif //BIBBLEBYTECODE_BUFFER_H

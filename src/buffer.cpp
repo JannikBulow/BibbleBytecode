@@ -3,6 +3,7 @@
 #include "BibbleBytecode/buffer.h"
 
 #include <cstring>
+#include <fstream>
 
 namespace bibblebytecode {
     ByteBuffer::ByteBuffer(const uint8_t* data, size_t size)
@@ -39,5 +40,33 @@ namespace bibblebytecode {
         mPos += count;
 
         return *this;
+    }
+
+    ByteBuffer Open(const char* filePath) {
+        std::ifstream file(filePath, std::ios::binary | std::ios::ate);
+        if (file.fail()) {
+            return {};
+        }
+
+        std::streamsize size = file.tellg();
+        if (size < 0) {
+            return {};
+        }
+
+        file.seekg(0, std::ios::beg);
+
+        auto buffer = std::make_unique<uint8_t[]>(size);
+
+        file.read(reinterpret_cast<std::ifstream::char_type*>(buffer.get()), size);
+
+        if (file.fail()) {
+            return {};
+        }
+
+        return {std::move(buffer), static_cast<size_t>(size)};
+    }
+
+    ByteBuffer Open(const std::string& filePath) {
+        return Open(filePath.c_str());
     }
 }
