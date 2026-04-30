@@ -10,7 +10,13 @@
 namespace bibblebytecode {
     class ByteBuffer {
     public:
-        ByteBuffer() = default;
+        ByteBuffer()
+            : mOwner(nullptr)
+            , mData(nullptr)
+            , mSize(0)
+            , mPos(0)
+            , mFail(true) {}
+
         ByteBuffer(const uint8_t* data, size_t size);
         ByteBuffer(std::unique_ptr<uint8_t[]> data, size_t size);
 
