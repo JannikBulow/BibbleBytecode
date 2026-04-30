@@ -3,12 +3,14 @@
 #ifndef BIBBLEBYTECODE_BUFFER_H
 #define BIBBLEBYTECODE_BUFFER_H 1
 
+#include "BibbleBytecode/api.h"
+
 #include <cstdint>
 #include <memory>
 #include <string>
 
 namespace bibblebytecode {
-    class ByteBuffer {
+    class BIBBLEBYTECODE_EXPORT ByteBuffer {
     public:
         ByteBuffer()
             : mOwner(nullptr)
@@ -37,8 +39,8 @@ namespace bibblebytecode {
         bool mFail;
     };
 
-    ByteBuffer Open(const char* filePath);
-    ByteBuffer Open(const std::string& filePath);
+    BIBBLEBYTECODE_EXPORT ByteBuffer Open(const char* filePath);
+    BIBBLEBYTECODE_EXPORT ByteBuffer Open(const std::string& filePath);
 }
 
 #endif //BIBBLEBYTECODE_BUFFER_H
