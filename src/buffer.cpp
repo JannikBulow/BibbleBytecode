@@ -6,7 +6,15 @@
 
 namespace bibblebytecode {
     ByteBuffer::ByteBuffer(const uint8_t* data, size_t size)
-        : mData(data)
+        : mOwner(nullptr)
+        , mData(data)
+        , mSize(size)
+        , mPos(0)
+        , mFail(false) {}
+
+    ByteBuffer::ByteBuffer(std::unique_ptr<uint8_t[]> data, size_t size)
+        : mOwner(std::move(data))
+        , mData(mOwner.get())
         , mSize(size)
         , mPos(0)
         , mFail(false) {}

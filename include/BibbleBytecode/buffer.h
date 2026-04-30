@@ -4,12 +4,15 @@
 #define BIBBLEBYTECODE_BUFFER_H 1
 
 #include <cstdint>
+#include <memory>
+#include <string>
 
 namespace bibblebytecode {
     class ByteBuffer {
     public:
         ByteBuffer() = default;
         ByteBuffer(const uint8_t* data, size_t size);
+        ByteBuffer(std::unique_ptr<uint8_t[]> data, size_t size);
 
         bool fail() const { return mFail; }
 
@@ -21,6 +24,7 @@ namespace bibblebytecode {
         ByteBuffer& read(uint8_t* buf, size_t count);
 
     private:
+        std::unique_ptr<uint8_t[]> mOwner;
         const uint8_t* mData;
         size_t mSize;
         size_t mPos;
