@@ -4,7 +4,9 @@ project(BibbleBytecode)
 include(GenerateExportHeader)
 
 set(SOURCES
+    src/buffer.cpp
     src/reader.cpp
+    src/writer.cpp
 )
 
 set(HEADERS
@@ -19,7 +21,7 @@ set(HEADERS
     include/BibbleBytecode/allocator_view.h
     include/BibbleBytecode/buffer.h
     include/BibbleBytecode/reader.h
-    src/buffer.cpp
+    include/BibbleBytecode/writer.h
 )
 
 source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})
