@@ -203,8 +203,11 @@ namespace bibblebytecode::reader {
     }
 
     std::optional<Field> ReadField(ReadableByteBuffer& in) {
-        std::optional<uint32_t> typeID = ReadLE<uint32_t>(in);
+        std::optional<uint8_t> typeID = ReadLE<uint8_t>(in);
         if (!typeID.has_value()) return std::nullopt;
+
+        std::optional<uint8_t> padding = ReadLE<uint8_t>(in);
+        if (!padding.has_value()) return std::nullopt;
 
         std::optional<ConstantIndex> name = ReadConstantIndex(in);
         if (!name.has_value()) return std::nullopt;

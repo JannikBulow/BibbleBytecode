@@ -7,7 +7,8 @@
 
 namespace bibblebytecode {
     struct Field {
-        uint32_t typeID;
+        uint8_t typeID;
+        uint8_t padding_;
         ConstantIndex name;
     };
 }
