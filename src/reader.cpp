@@ -270,6 +270,8 @@ namespace bibblebytecode::reader {
             }
             methods[i] = method.value();
         }
+
+        return Class(name.value(), superClass.value(), fieldCount.value(), methodCount.value(), fields, methods);
     }
 
     std::optional<uint16_t> ReadFunctionCount(ByteBuffer& in) {
