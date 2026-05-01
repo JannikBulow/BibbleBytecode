@@ -42,6 +42,59 @@ namespace bibblebytecode {
         return *this;
     }
 
+    WritableByteBuffer::WritableByteBuffer()
+        : mData(nullptr)
+        , mSize(0)
+        , mCapacity(0)
+        , mPos(0)
+        , mFail(false) {}
+
+    void WritableByteBuffer::seek(size_t newPos) {
+        if (mFail) [[unlikely]] return;
+        if (newPos > mSize) [[unlikely]] {
+            mFail = true;
+            return;
+        }
+        mPos = newPos;
+    }
+
+    void WritableByteBuffer::reserve(size_t capacity) {
+        if (mFail) [[unlikely]] return;
+        if (capacity <= mCapacity) return;
+
+        std::unique_ptr<uint8_t[]> newBuffer = std::make_unique<uint8_t[]>(capacity);
+        if (mData != nullptr) std::memcpy(newBuffer.get(), mData.get(), mCapacity);
+
+        mData = std::move(newBuffer);
+        mCapacity = capacity;
+    }
+
+    void WritableByteBuffer::ensureCapacity(size_t neededBytes) {
+        if (mFail) [[unlikely]] return;
+        if (mPos + neededBytes <= mCapacity) return;
+
+        size_t newCapacity = mCapacity != 0 ? mCapacity * 2 : 512;
+        if (newCapacity < mPos + neededBytes) newCapacity = mPos + neededBytes;
+
+        reserve(newCapacity);
+    }
+
+    WritableByteBuffer& WritableByteBuffer::write(const uint8_t* data, size_t count) {
+        if (mFail) [[unlikely]] return *this;
+        ensureCapacity(count);
+
+        if (mPos > mSize) [[unlikely]] {
+            std::memset(mData.get() + mSize, 0, mPos - mSize);
+        }
+
+        std::memcpy(mData.get() + mPos, data, count);
+
+        mPos += count;
+        mSize = std::max(mSize, mPos);
+
+        return *this;
+    }
+
     ReadableByteBuffer Open(const char* filePath) {
         std::ifstream file(filePath, std::ios::binary | std::ios::ate);
         if (file.fail()) {

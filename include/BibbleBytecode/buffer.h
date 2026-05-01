@@ -39,6 +39,31 @@ namespace bibblebytecode {
         bool mFail;
     };
 
+    class BIBBLEBYTECODE_EXPORT WritableByteBuffer {
+    public:
+        WritableByteBuffer();
+
+        bool fail() const { return mFail; }
+
+        size_t size() const { return mSize; }
+        size_t capacity() const { return mCapacity; }
+
+        void seek(size_t newPos);
+        size_t tell() const { return mPos; }
+
+        void reserve(size_t capacity);
+        void ensureCapacity(size_t neededBytes);
+
+        WritableByteBuffer& write(const uint8_t* data, size_t count);
+
+    private:
+        std::unique_ptr<uint8_t[]> mData;
+        size_t mSize;
+        size_t mCapacity;
+        size_t mPos;
+        bool mFail;
+    };
+
     BIBBLEBYTECODE_EXPORT ReadableByteBuffer Open(const char* filePath);
     BIBBLEBYTECODE_EXPORT ReadableByteBuffer Open(const std::string& filePath);
 }
