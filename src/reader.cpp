@@ -26,6 +26,7 @@ namespace bibblebytecode::reader {
     template<class Len>
     std::optional<std::string_view> ReadString(ByteBuffer& in) {
         std::optional<Len> length = ReadLE<Len>(in);
+        if (!length.has_value()) return std::nullopt;
 
         const char* data = reinterpret_cast<const char*>(in.raw() + in.tell());
         in.seek(in.tell() + length.value());
