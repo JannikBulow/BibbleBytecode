@@ -5,7 +5,7 @@
 
 namespace bibblebytecode::reader {
     template<class T>
-    std::optional<T> ReadLE(ByteBuffer& in) {
+    std::optional<T> ReadLE(ReadableByteBuffer& in) {
         static_assert(std::is_integral_v<T>, "T must be integral");
 
         T value;
@@ -24,7 +24,7 @@ namespace bibblebytecode::reader {
     }
 
     template<class Len>
-    std::optional<std::string_view> ReadString(ByteBuffer& in) {
+    std::optional<std::string_view> ReadString(ReadableByteBuffer& in) {
         std::optional<Len> length = ReadLE<Len>(in);
         if (!length.has_value()) return std::nullopt;
 
@@ -35,35 +35,35 @@ namespace bibblebytecode::reader {
         return std::string_view(data, length.value());
     }
 
-    std::optional<uint32_t> ReadMagicNumber(ByteBuffer& in, bool verify) {
+    std::optional<uint32_t> ReadMagicNumber(ReadableByteBuffer& in, bool verify) {
         std::optional<uint32_t> value = ReadLE<uint32_t>(in);
         if (!value.has_value()) return std::nullopt;
         if (verify && value.value() != MAGIC) return std::nullopt;
         return value;
     }
 
-    std::optional<uint16_t> ReadFormatVersion(ByteBuffer& in) {
+    std::optional<uint16_t> ReadFormatVersion(ReadableByteBuffer& in) {
         return ReadLE<uint16_t>(in);
     }
 
-    std::optional<ConstantIndex> ReadConstantIndex(ByteBuffer& in) {
+    std::optional<ConstantIndex> ReadConstantIndex(ReadableByteBuffer& in) {
         return ReadLE<ConstantIndex>(in);
     }
 
-    std::optional<ConstPool::Tag> ReadConstantTag(ByteBuffer& in) {
+    std::optional<ConstPool::Tag> ReadConstantTag(ReadableByteBuffer& in) {
         std::optional<uint8_t> value = ReadLE<uint8_t>(in);
         if (!value.has_value()) return std::nullopt;
         return static_cast<ConstPool::Tag>(value.value());
     }
 
-    std::optional<ConstPool::ModuleInfo> ReadModuleInfo(ByteBuffer& in) {
+    std::optional<ConstPool::ModuleInfo> ReadModuleInfo(ReadableByteBuffer& in) {
         std::optional<ConstantIndex> name = ReadConstantIndex(in);
         if (!name.has_value()) return std::nullopt;
 
         return ConstPool::ModuleInfo(name.value());
     }
 
-    std::optional<ConstPool::ClassInfo> ReadClassInfo(ByteBuffer& in) {
+    std::optional<ConstPool::ClassInfo> ReadClassInfo(ReadableByteBuffer& in) {
         std::optional<ConstantIndex> module = ReadConstantIndex(in);
         if (!module.has_value()) return std::nullopt;
         std::optional<ConstantIndex> name = ReadConstantIndex(in);
@@ -72,7 +72,7 @@ namespace bibblebytecode::reader {
         return ConstPool::ClassInfo(module.value(), name.value());
     }
 
-    std::optional<ConstPool::FieldInfo> ReadFieldInfo(ByteBuffer& in) {
+    std::optional<ConstPool::FieldInfo> ReadFieldInfo(ReadableByteBuffer& in) {
         std::optional<ConstantIndex> clas = ReadConstantIndex(in);
         if (!clas.has_value()) return std::nullopt;
         std::optional<ConstantIndex> name = ReadConstantIndex(in);
@@ -81,7 +81,7 @@ namespace bibblebytecode::reader {
         return ConstPool::FieldInfo(clas.value(), name.value());
     }
 
-    std::optional<ConstPool::MethodInfo> ReadMethodInfo(ByteBuffer& in) {
+    std::optional<ConstPool::MethodInfo> ReadMethodInfo(ReadableByteBuffer& in) {
         std::optional<ConstantIndex> clas = ReadConstantIndex(in);
         if (!clas.has_value()) return std::nullopt;
         std::optional<ConstantIndex> name = ReadConstantIndex(in);
@@ -90,7 +90,7 @@ namespace bibblebytecode::reader {
         return ConstPool::MethodInfo(clas.value(), name.value());
     }
 
-    std::optional<ConstPool::FunctionInfo> ReadFunctionInfo(ByteBuffer& in) {
+    std::optional<ConstPool::FunctionInfo> ReadFunctionInfo(ReadableByteBuffer& in) {
         std::optional<ConstantIndex> module = ReadConstantIndex(in);
         if (!module.has_value()) return std::nullopt;
         std::optional<ConstantIndex> name = ReadConstantIndex(in);
@@ -99,7 +99,7 @@ namespace bibblebytecode::reader {
         return ConstPool::FunctionInfo(module.value(), name.value());
     }
 
-    std::optional<ConstPool::Entry> ReadConstantEntry(ByteBuffer& in, ConstPool::Tag tag) {
+    std::optional<ConstPool::Entry> ReadConstantEntry(ReadableByteBuffer& in, ConstPool::Tag tag) {
         ConstPool::Entry entry{};
         entry.tag = tag;
 
@@ -169,17 +169,17 @@ namespace bibblebytecode::reader {
         return entry;
     }
 
-    std::optional<ConstPool::Entry> ReadConstantTagAndEntry(ByteBuffer& in) {
+    std::optional<ConstPool::Entry> ReadConstantTagAndEntry(ReadableByteBuffer& in) {
         std::optional<ConstPool::Tag> tag = ReadConstantTag(in);
         if (!tag.has_value()) return std::nullopt;
         return ReadConstantEntry(in, tag.value());
     }
 
-    std::optional<uint16_t> ReadConstantEntryCount(ByteBuffer& in) {
+    std::optional<uint16_t> ReadConstantEntryCount(ReadableByteBuffer& in) {
         return ReadLE<uint16_t>(in);
     }
 
-    std::optional<ConstPool> ReadConstPool(ByteBuffer& in, const AllocatorView& allocator) {
+    std::optional<ConstPool> ReadConstPool(ReadableByteBuffer& in, const AllocatorView& allocator) {
         std::optional<uint16_t> entryCount = ReadConstantEntryCount(in);
         if (!entryCount.has_value()) return std::nullopt;
 
@@ -198,11 +198,11 @@ namespace bibblebytecode::reader {
         return ConstPool(entryCount.value(), entries);
     }
 
-    std::optional<uint16_t> ReadFieldCount(ByteBuffer& in) {
+    std::optional<uint16_t> ReadFieldCount(ReadableByteBuffer& in) {
         return ReadLE<uint16_t>(in);
     }
 
-    std::optional<Field> ReadField(ByteBuffer& in) {
+    std::optional<Field> ReadField(ReadableByteBuffer& in) {
         std::optional<uint32_t> typeID = ReadLE<uint32_t>(in);
         if (!typeID.has_value()) return std::nullopt;
 
@@ -212,11 +212,11 @@ namespace bibblebytecode::reader {
         return Field(typeID.value(), name.value());
     }
 
-    std::optional<uint16_t> ReadMethodCount(ByteBuffer& in) {
+    std::optional<uint16_t> ReadMethodCount(ReadableByteBuffer& in) {
         return ReadLE<uint16_t>(in);
     }
 
-    std::optional<Method> ReadMethod(ByteBuffer& in) {
+    std::optional<Method> ReadMethod(ReadableByteBuffer& in) {
         std::optional<ConstantIndex> name = ReadConstantIndex(in);
         if (!name.has_value()) return std::nullopt;
 
@@ -226,11 +226,11 @@ namespace bibblebytecode::reader {
         return Method(name.value(), function.value());
     }
 
-    std::optional<uint16_t> ReadClassCount(ByteBuffer& in) {
+    std::optional<uint16_t> ReadClassCount(ReadableByteBuffer& in) {
         return ReadLE<uint16_t>(in);
     }
 
-    std::optional<Class> ReadClass(ByteBuffer& in, const AllocatorView& allocator) {
+    std::optional<Class> ReadClass(ReadableByteBuffer& in, const AllocatorView& allocator) {
         std::optional<ConstantIndex> name = ReadConstantIndex(in);
         if (!name.has_value()) return std::nullopt;
 
@@ -274,11 +274,11 @@ namespace bibblebytecode::reader {
         return Class(name.value(), superClass.value(), fieldCount.value(), methodCount.value(), fields, methods);
     }
 
-    std::optional<uint16_t> ReadFunctionCount(ByteBuffer& in) {
+    std::optional<uint16_t> ReadFunctionCount(ReadableByteBuffer& in) {
         return ReadLE<uint16_t>(in);
     }
 
-    std::optional<Function> ReadFunction(ByteBuffer& in) {
+    std::optional<Function> ReadFunction(ReadableByteBuffer& in) {
         std::optional<ConstantIndex> name = ReadConstantIndex(in);
         if (!name.has_value()) return std::nullopt;
 
@@ -301,7 +301,7 @@ namespace bibblebytecode::reader {
         return Function(name.value(), flags.value(), registerCount.value(), parameterCount.value(), bytecodeSize.value(), bytecode);
     }
 
-    std::optional<Module> ReadModule(ByteBuffer& in, const AllocatorView& allocator) {
+    std::optional<Module> ReadModule(ReadableByteBuffer& in, const AllocatorView& allocator) {
         std::optional<uint32_t> magic = ReadMagicNumber(in, true);
         if (!magic.has_value()) return std::nullopt;
 

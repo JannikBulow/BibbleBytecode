@@ -10,17 +10,17 @@
 #include <string>
 
 namespace bibblebytecode {
-    class BIBBLEBYTECODE_EXPORT ByteBuffer {
+    class BIBBLEBYTECODE_EXPORT ReadableByteBuffer {
     public:
-        ByteBuffer()
+        ReadableByteBuffer()
             : mOwner(nullptr)
             , mData(nullptr)
             , mSize(0)
             , mPos(0)
             , mFail(true) {}
 
-        ByteBuffer(const uint8_t* data, size_t size);
-        ByteBuffer(std::unique_ptr<uint8_t[]> data, size_t size);
+        ReadableByteBuffer(const uint8_t* data, size_t size);
+        ReadableByteBuffer(std::unique_ptr<uint8_t[]> data, size_t size);
 
         bool fail() const { return mFail; }
 
@@ -29,7 +29,7 @@ namespace bibblebytecode {
         void seek(size_t newPos);
         size_t tell() const { return mPos; }
 
-        ByteBuffer& read(uint8_t* buf, size_t count);
+        ReadableByteBuffer& read(uint8_t* buf, size_t count);
 
     private:
         std::unique_ptr<uint8_t[]> mOwner;
@@ -39,8 +39,8 @@ namespace bibblebytecode {
         bool mFail;
     };
 
-    BIBBLEBYTECODE_EXPORT ByteBuffer Open(const char* filePath);
-    BIBBLEBYTECODE_EXPORT ByteBuffer Open(const std::string& filePath);
+    BIBBLEBYTECODE_EXPORT ReadableByteBuffer Open(const char* filePath);
+    BIBBLEBYTECODE_EXPORT ReadableByteBuffer Open(const std::string& filePath);
 }
 
 #endif //BIBBLEBYTECODE_BUFFER_H

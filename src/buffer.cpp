@@ -6,21 +6,21 @@
 #include <fstream>
 
 namespace bibblebytecode {
-    ByteBuffer::ByteBuffer(const uint8_t* data, size_t size)
+    ReadableByteBuffer::ReadableByteBuffer(const uint8_t* data, size_t size)
         : mOwner(nullptr)
         , mData(data)
         , mSize(size)
         , mPos(0)
         , mFail(false) {}
 
-    ByteBuffer::ByteBuffer(std::unique_ptr<uint8_t[]> data, size_t size)
+    ReadableByteBuffer::ReadableByteBuffer(std::unique_ptr<uint8_t[]> data, size_t size)
         : mOwner(std::move(data))
         , mData(mOwner.get())
         , mSize(size)
         , mPos(0)
         , mFail(false) {}
 
-    void ByteBuffer::seek(size_t newPos) {
+    void ReadableByteBuffer::seek(size_t newPos) {
         if (mFail) [[unlikely]] return;
         if (newPos > mSize) [[unlikely]] {
             mFail = true;
@@ -29,7 +29,7 @@ namespace bibblebytecode {
         mPos = newPos;
     }
 
-    ByteBuffer& ByteBuffer::read(uint8_t* buf, size_t count) {
+    ReadableByteBuffer& ReadableByteBuffer::read(uint8_t* buf, size_t count) {
         if (mFail) [[unlikely]] return *this;
         if (mPos + count > mSize) [[unlikely]] {
             mFail = true;
@@ -42,7 +42,7 @@ namespace bibblebytecode {
         return *this;
     }
 
-    ByteBuffer Open(const char* filePath) {
+    ReadableByteBuffer Open(const char* filePath) {
         std::ifstream file(filePath, std::ios::binary | std::ios::ate);
         if (file.fail()) {
             return {};
@@ -66,7 +66,7 @@ namespace bibblebytecode {
         return {std::move(buffer), static_cast<size_t>(size)};
     }
 
-    ByteBuffer Open(const std::string& filePath) {
+    ReadableByteBuffer Open(const std::string& filePath) {
         return Open(filePath.c_str());
     }
 }
