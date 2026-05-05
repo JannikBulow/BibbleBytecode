@@ -69,7 +69,7 @@ namespace bibblebytecode::writer {
             case ConstPool::SHORT: return WriteLE<int16_t>(out, entry.u.s);
             case ConstPool::INT: return WriteLE<int32_t>(out, entry.u.i);
             case ConstPool::LONG: return WriteLE<int64_t>(out, entry.u.l);
-            case ConstPool::STRING: return WriteString(out, entry.u.str.data(), entry.u.str.size());
+            case ConstPool::STRING: return WriteString<uint32_t>(out, entry.u.str.data(), entry.u.str.size());
             case ConstPool::MODULE_INFO: return WriteModuleInfo(out, entry.u.mi);
             case ConstPool::CLASS_INFO: return WriteClassInfo(out, entry.u.ci);
             case ConstPool::FIELD_INFO: return WriteFieldInfo(out, entry.u.fi);
