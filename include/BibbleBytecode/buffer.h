@@ -6,6 +6,7 @@
 #include "BibbleBytecode/api.h"
 
 #include <cstdint>
+#include <iostream>
 #include <memory>
 #include <string>
 
@@ -55,6 +56,8 @@ namespace bibblebytecode {
         void ensureCapacity(size_t neededBytes);
 
         WritableByteBuffer& write(const uint8_t* data, size_t count);
+
+        void emit(std::ostream& out) const;
 
     private:
         std::unique_ptr<uint8_t[]> mData;

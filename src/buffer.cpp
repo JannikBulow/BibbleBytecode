@@ -95,6 +95,11 @@ namespace bibblebytecode {
         return *this;
     }
 
+    void WritableByteBuffer::emit(std::ostream& out) const {
+        if (mFail) [[unlikely]] return;
+        out.write(reinterpret_cast<const std::ostream::char_type*>(mData.get()), static_cast<std::streamsize>(mSize));
+    }
+
     ReadableByteBuffer Open(const char* filePath) {
         std::ifstream file(filePath, std::ios::binary | std::ios::ate);
         if (file.fail()) {
