@@ -212,7 +212,7 @@ namespace bibblebytecode::reader {
         std::optional<ConstantIndex> name = ReadConstantIndex(in);
         if (!name.has_value()) return std::nullopt;
 
-        return Field(typeID.value(), name.value());
+        return Field(typeID.value(), padding.value(), name.value());
     }
 
     std::optional<uint16_t> ReadMethodCount(ReadableByteBuffer& in) {
