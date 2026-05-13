@@ -3,6 +3,8 @@
 #include "BibbleBytecode/_compatability.h"
 #include "BibbleBytecode/reader.h"
 
+#include <bit>
+
 namespace bibblebytecode::reader {
     template<class T>
     std::optional<T> ReadLE(ReadableByteBuffer& in) {
