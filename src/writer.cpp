@@ -3,6 +3,8 @@
 #include "BibbleBytecode/_compatability.h"
 #include "BibbleBytecode/writer.h"
 
+#include <bit>
+
 namespace bibblebytecode::writer {
     template<class T>
     bool WriteLE(WritableByteBuffer& out, T value) {
