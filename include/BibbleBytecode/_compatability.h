@@ -4,6 +4,9 @@
 #define BIBBLEBYTECODE__COMPATABILITY_H 1
 
 #include <cstdint>
+#ifdef _MSC_VER
+#include <cstdlib>
+#endif
 
 // this is why i love c++
 //TODO: add a macro or something to disallow intrinsics when building bibblebytecode
