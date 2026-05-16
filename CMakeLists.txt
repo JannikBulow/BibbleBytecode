@@ -50,3 +50,6 @@ target_include_directories(BibbleBytecode-static PUBLIC
 
 target_compile_features(BibbleBytecode-shared PUBLIC cxx_std_20)
 target_compile_features(BibbleBytecode-static PUBLIC cxx_std_20)
+
+set_target_properties(BibbleBytecode-shared PROPERTIES OUTPUT_NAME "bibble-bytecode")
+set_target_properties(BibbleBytecode-static PROPERTIES OUTPUT_NAME "bibble-bytecode-aio")
