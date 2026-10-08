@@ -51,5 +51,24 @@ target_include_directories(BibbleBytecode-static PUBLIC
 target_compile_features(BibbleBytecode-shared PUBLIC cxx_std_20)
 target_compile_features(BibbleBytecode-static PUBLIC cxx_std_20)
 
-set_target_properties(BibbleBytecode-shared PROPERTIES OUTPUT_NAME "bibble-bytecode")
-set_target_properties(BibbleBytecode-static PROPERTIES OUTPUT_NAME "bibble-bytecode-aio")
+set_target_properties(BibbleBytecode-shared PROPERTIES
+    OUTPUT_NAME "bibble-bytecode"
+    VERSION 1.0.0
+    SOVERSION 1
+)
+set_target_properties(BibbleBytecode-static PROPERTIES
+    OUTPUT_NAME "bibble-bytecode-aio"
+    VERSION 1.0.0
+)
+
+install(
+    TARGETS BibbleBytecode-shared BibbleBytecode-static
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+)
+
+install(
+    DIRECTORY include/
+    DESTINATION include
+)
