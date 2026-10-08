@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.26)
-project(BibbleBytecode)
+project(BibbleBytecode VERSION 1.0.0 LANGUAGES CXX)
 
+include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 
 set(SOURCES
@@ -41,28 +42,45 @@ target_compile_definitions(BibbleBytecode-static PUBLIC BIBBLEBYTECODE_STATIC_DE
 target_include_directories(BibbleBytecode-shared PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
 )
 
 target_include_directories(BibbleBytecode-static PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
 )
 
 target_compile_features(BibbleBytecode-shared PUBLIC cxx_std_20)
 target_compile_features(BibbleBytecode-static PUBLIC cxx_std_20)
 
 set_target_properties(BibbleBytecode-shared PROPERTIES
+    EXPORT_NAME Bytecode
     OUTPUT_NAME "bibble-bytecode"
     VERSION 1.0.0
     SOVERSION 1
 )
 set_target_properties(BibbleBytecode-static PROPERTIES
+    EXPORT_NAME BytecodeStatic
     OUTPUT_NAME "bibble-bytecode-aio"
     VERSION 1.0.0
 )
 
+configure_package_config_file(
+    cmake/BibbleBytecodeConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/BibbleBytecodeConfig.cmake
+    INSTALL_DESTINATION lib/cmake/BibbleBytecode
+)
+
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/BibbleBytecodeConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+
 install(
     TARGETS BibbleBytecode-shared BibbleBytecode-static
+    EXPORT BibbleBytecodeTargets
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
@@ -71,4 +89,18 @@ install(
 install(
     DIRECTORY include/
     DESTINATION include
+)
+
+install(
+    EXPORT BibbleBytecodeTargets
+    FILE BibbleBytecodeTargets.cmake
+    NAMESPACE Bibble::
+    DESTINATION lib/cmake/BibbleBytecode
+)
+
+install(
+    FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/BibbleBytecodeConfig.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/BibbleBytecodeConfigVersion.cmake
+    DESTINATION lib/cmake/BibbleBytecode
 )
